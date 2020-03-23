@@ -1,5 +1,5 @@
 module int16to8 #(
-    parameter pTYPE_OF_TRANSFOR = "lin"             // possible types are lin, log
+    parameter pTYPE_OF_TRANSFORM = "lin"             // possible types are lin, log
 )(
     input                   iclk ,
     input        [15:0]     idata,

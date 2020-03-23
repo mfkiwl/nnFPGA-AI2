@@ -16,8 +16,8 @@ module mult_core_fast#(
     parameter pKERNEL_Y = 3
 )(
 
-    input                                           iclk, 
-    input                                           irst,
+    input                                           iclk        , 
+    input                                           irst        ,
 
     input [pKERNEL_Y][pKERNEL_X][pDATA_W-1:0]       idata       ,
     input [pKERNEL_Y][pKERNEL_X][pDATA_W-1:0]       idata_kernel,
@@ -26,22 +26,24 @@ module mult_core_fast#(
     output logic [pDATA_W-1:0]                      odata 
 );
 
+    import mult_core_package::pTYPE_OF_TRANSFORM;
+
 
     localparam lpMULT_RES_W = $clog2(pKERNEL_Y*pKERNEL_X);
     localparam lp ;
     localparam lp ;
 
     logic [lpMULT_RES_W][pDATA_W-1:0]               mult_results;
-
+    logic [lpMULT_RES_W][pDATA_W*2-1:0]             post_mult_results;    
 
     generate;
         if ( (pKERNEL_X == 2) && (pKERNEL_Y == 2) ) begin
             add2_2 #(
                 .pDATA_W (pDATA_W )
                 ) u_add2_2(
-            	    .iclk  ( iclk     ),
-                    .ien   ( icalc_en ),
-                    .idata (  ),
+            	    .iclk  ( iclk         ),
+                    .ien   ( icalc_en     ),
+                    .idata ( mult_results ),
                     .odata (  )
             );
         end
@@ -49,10 +51,10 @@ module mult_core_fast#(
             add3_3 #(
                 .pDATA_W (pDATA_W )
                 ) u_add3_3(
-            	    .iclk  (  ),
-                    .ien   ( icalc_en ),
-                    .idata (  ),
-                    .odata (  )
+            	    .iclk  ( iclk         ),
+                    .ien   ( icalc_en     ),
+                    .idata ( mult_results ),
+                    .odata (      )
             );
         end
         else if ( (pKERNEL_X == 4) && (pKERNEL_Y == 4) ) begin 
@@ -71,6 +73,37 @@ module mult_core_fast#(
         else begin 
             // pass
         end
+
+        if ( pDATA_W == 8 ) begin 
+            for ( int i = 0; i < pDATA_W; i++ ) begin
+                int16to8 #(
+                    .pTYPE_OF_TRANSFORM (pTYPE_OF_TRANSFORM )
+                )
+                u_int16to8(
+                    .iclk  ( iclk                 ),
+                    .idata ( post_mult_results[i] ),
+                    .odata ( mult_results[i]      )
+                );
+            end 
+        end
+        else if ( pDATA_W == 16 ) begin
+            for ( int i = 0; i < pDATA_W, i++ ) begin
+                int32to16 #(
+                    .pTYPE_OF_TRANSFORM (pTYPE_OF_TRANSFORM )
+                )
+                u_int32to16 (
+                	.iclk  ( iclk                 ),
+                    .idata ( post_mult_results[i] ),
+                    .odata ( mult_results[i]      )
+                );
+                
+            end 
+        end 
+        else begin 
+            // pass
+
+        end
+
     endgenerate
 
 

@@ -1,4 +1,6 @@
-module int32to16(
+module int32to16#(
+    parameter pTYPE_OF_TRANSFORM = "lin"             // possible types are lin, log
+)(
 
     input                   iclk ,
     input        [31:0]     idata,

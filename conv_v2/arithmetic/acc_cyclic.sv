@@ -1,24 +1,22 @@
 module add_cyclic #(
     parameter pDATA_IN_W        = 8,
     parameter pNUM_OF_ELEMENTS  = 9,  
-    parameter pDATA_OUT_W       =   ( pNUM_OF_ELEMENTS <= 2  ) ? pDATA_IN_W + 1 : 
-                                  ( ( pNUM_OF_ELEMENTS <= 4  ) ? pDATA_IN_W + 2 : 
-                                  ( ( pNUM_OF_ELEMENTS <= 8  ) ? pDATA_IN_W + 3 :
-                                  ( ( pNUM_OF_ELEMENTS <= 16 ) ? pDATA_IN_W + 4 : 
-                                  ( ( pNUM_OF_ELEMENTS <= 32 ) ? pDATA_IN_w + 5 : pDATA_IN_W ))))
     parameter pRESET_TYPE = "auto" // "manual" 
 
 )(
-    input              iclk,
+    input   iclk,
     input   irst, 
 
     input [pDATA_IN_W-1:0]      idata    , 
     input                       idata_en ,
 
-    output logic [pDATA_OUT_W-1:0]    odata      ,
+    output logic [pDATA_IN_W-1:0]    odata      ,
     output logic                     odata_ready
 
 );
+
+    localparam      lpINT_W = pDATA_IN_W + $clog2(pNUM_OF_ELEMENTS);
+
 
     logic [$clog2(pNUM_OF_ELEMENTS):0]      elements_cnt;
 
@@ -60,7 +58,9 @@ module add_cyclic #(
         else if ( pRESET_TYPE == "manual" ) begin
 
             always_ff @( posedge iclk ) begin : blockName
+                if ( irst ) begin 
                 
+                end
             end
 
 

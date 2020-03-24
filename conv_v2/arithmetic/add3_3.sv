@@ -7,10 +7,11 @@ module add3_3#(
     output logic [(pDATA_W*2)-1:0]  odata
 );
 
-    localparam          lpNUM = 7;
+    localparam          lpNUM = 8;
+    localparam          lpINT_W = pDATA_W + 4;
 
-    logic [lpNUM-1:0][(pDATA_W*2)-1:0]      pre_adders;
-    logic [2:0][(pDATA_W*2)-1:0]             data_9;
+    logic [lpNUM-1:0][lpINT_W-1:0]      pre_adders;
+    logic [2:0][lpINT_W-1:0]             data_9;
 
 
 
@@ -29,7 +30,9 @@ module add3_3#(
             pre_adders[6] <= pre_adders[4] + pre_adders[5];     // clk2
             data_9[2]     <= data_9[1];
 
-            odata         <= pre_adders[6] + data_9[2];         // clk4
+            pre_adders[7] <= pre_adders[6] + data_9[2];         // clk4
+
+            odata <= pre_adders[7] / 16;
         end
     end
 

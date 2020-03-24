@@ -7,9 +7,10 @@ module add4_4#(
     output [(pDATA_W*2)-1:0]    odata,
 );
 
-    localparam          lpNUM = 14;
+    localparam          lpNUM = 15;
+    localparam          lpINT_W = pDATA_W + 4;
 
-    logic [lpNUM-1:0][(pDATA_W*2)-1:0]      pre_adders
+    logic [lpNUM-1:0][lpINT_W-1:0]      pre_adders
 
     always_ff @( posedge iclk ) begin : blockName
         if ( ien ) begin 
@@ -30,7 +31,10 @@ module add4_4#(
             pre_adders[12] <= pre_adders[4] + pre_adders[5];     // clk2
             pre_adders[13] <= pre_adders[4] + pre_adders[5];     // clk2
 
-            odata          <= pre_adders[12] + idata[13]];         // clk4
+            pre_adders[14] <= pre_adders[12] + pre_adders[13];         // clk4
+        
+            odata <= pre_adders[14] / 16;
+        
         end
         
     end
